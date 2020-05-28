@@ -2,9 +2,15 @@
 
 # Colourise the output
 RED='\033[0;31m'        # Red
-GRE='\033[0;32m'        # Green
-YEL='\033[1;33m'        # Yellow
+GRE='\033[1;32m'        # Green
+YEL='\033[1;33m'
+BLU='\033[1;34m'        # Yellow
 NCL='\033[0m'           # No Color
+# initialise the arrays to hold the desired stats
+
+size_arr=()
+
+
 
 file_specification() {
         FILE_NAME="$(basename "${entry}")"
@@ -19,6 +25,7 @@ file_specification() {
         printf "%*s\tName only:\t${YEL}%s${NCL}\n"      $((indent+4)) '' "$NAME"
         printf "%*s\tExtension:\t${YEL}%s${NCL}\n"      $((indent+4)) '' "$EXT"
         printf "%*s\tFile size:\t${YEL}%s${NCL}\n"      $((indent+4)) '' "$SIZE"
+
 }
 
 walk() {
@@ -33,4 +40,50 @@ walk() {
 # If the path is empty use the current, otherwise convert relative to absolute; Exec walk()
 [[ -z "${1}" ]] && ABS_PATH="${PWD}" || cd "${1}" && ABS_PATH="${PWD}"
 walk "${ABS_PATH}"      
-echo
+
+printf "\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
+printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
+printf "\t\t\t\t${YEL}Disk Sector\tSize\tUsed\tAvailable\tPercentage${NCL}\n"
+df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}'
+
+
+printf "\n\n\t\t\t\t\t${RED}Five largest files!${NCL}\n\n"
+printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
+printf "\n\t${RED}    Size in Bytes\t\t${GRE}Absolute Paths to the files${NCL}\n\n"
+find "${ABS_PATH}" -type f -printf "\t\t%s\t${YEL}%p${NCL}\n" | sort -n | tail -5
+
+
+printf "\n\n\t\t\t\t\t${RED}Five largest folders!${NCL}\n\n"
+printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
+
+#System info
+
+printf "\n\t\t\t\t\t${RED} System information${NCL}\n"
+unameinfo=`uname -a 2>/dev/null`
+if [ "$unameinfo" ]; then
+  printf "\n\n\t\t${GRE}Kernel information:${YEL}\t\t $unameinfo \n" 
+fi
+
+release=`cat /etc/*-release 2>/dev/null`
+if [ "$release" ]; then
+  printf "\n\t\t${GRE}Specific release information:${YEL}\n"
+
+  for each in $release; do
+    printf "\n\t\t $each"
+  done
+
+fi
+
+hostname=`hostname 2>/dev/null`
+if [ "$hostname" ]; then
+  printf "\n\n\t\t${GRE}Hostname:${YEL}\t\t $hostname \n"  
+ 
+fi
+
+
+
+
+
+printf "\n${RED}Finished printing !${NCL}\n\n"
+
+
