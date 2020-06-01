@@ -1,5 +1,5 @@
 #!/bin/bash
-#testeests
+
 # Colourise the output
 RED='\033[0;31m'        # Red
 GRE='\033[1;32m'        # Green
@@ -10,7 +10,7 @@ NCL='\033[0m'           # No Color
 
 size_arr=()
 
-
+depth=0
 
 file_specification() {
     FILE_NAME="$(basename "${entry}")"
@@ -34,7 +34,8 @@ walk() {
     # If the entry is a file do some operations
     for entry in "$1"/*; do [[ -f "$entry" ]] && file_specification; done
     # If the entry is a directory call walk() == create recursion
-    for entry in "$1"/*; do [[ -d "$entry" ]] && walk "$entry" $((indent+4)); done
+    depth=$((depth+1))
+    for entry in "$1"/*; do [[ -d "$entry" ]] && [[  "$depth" -le 2 ]] && walk "$entry" $((indent+4)); done
 }
 
 
@@ -116,5 +117,3 @@ fi
 
 
 printf "\n${RED}Finished printing !${NCL}\n\n"
-
-
