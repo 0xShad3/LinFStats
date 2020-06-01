@@ -47,11 +47,14 @@ file_permissions() {
     attr_664=0
     attr_655=0
     other_attr=0
+    printf "\n\t\t\t\t\t${RED}File Permissions!${NCL}\n\n"
+    printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     for file in $total_files; do
         if [ $(stat -c "%a" "$file") == "755" ]; then
             attr_755=$((attr_755 + 1))
             elif [ $(stat -c "%a" "$file") == "777" ]; then
             attr_777=$((attr_777 + 1))
+            printf "\t\t${RED}[IMPORTANT!]${YEL} This file has 777 attributes -> ${RED}$file \n"
             elif [ $(stat -c "%a" "$file") == "664" ]; then
             attr_664=$((attr_664 + 1))
             elif [ $(stat -c "%a" "$file") == "655" ]; then
@@ -63,9 +66,7 @@ file_permissions() {
     done
     
     #attr_644=$(( ( $attr_644 / total_no_of_files ) * 100 ))
-    printf "\n\t\t\t\t\t${RED}File Permissions!${NCL}\n\n"
-    printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
-    printf "\t\t\t\t${YEL}Total Files\t777\t755\t655\t664\tOther${NCL}\n"
+    printf "\n\n\t\t\t\t${YEL}Total Files\t777\t755\t655\t664\tOther${NCL}\n"
     printf "\t\t\t\t${GRE}$total_no_of_files\t\t$attr_777\t$attr_755\t$attr_655\t$attr_664\t$other_attr\n\n"
 }
 
@@ -74,7 +75,7 @@ file_permissions() {
 walk "${ABS_PATH}"
 file_permissions "${ABS_PATH}"
 
-printf "\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
+printf "\n\n\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
 printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
 printf "\t\t\t\t${YEL}Disk Sector\tSize\tUsed\tAvailable\tPercentage${NCL}\n"
 df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}'
