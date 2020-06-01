@@ -63,13 +63,23 @@ file_permissions() {
             other_attr=$((other_attr + 1))
         
         fi
+
     done
     
     #attr_644=$(( ( $attr_644 / total_no_of_files ) * 100 ))
+    perc_777=$((attr_777*100/total_no_of_files))
+    perc_755=$((attr_755*100/total_no_of_files))
+    perc_655=$((attr_655*100/total_no_of_files))
+    perc_664=$((attr_664*100/total_no_of_files))
+    perc_other=$((other_attr*100/total_no_of_files))
+
     printf "\n\n\t\t\t\t${YEL}Total Files\t777\t755\t655\t664\tOther${NCL}\n"
     printf "\t\t\t\t${GRE}$total_no_of_files\t\t$attr_777\t$attr_755\t$attr_655\t$attr_664\t$other_attr\n\n"
-}
+    printf "\t\t\t\t${GRE}100 %% \t\t$perc_777%%\t$perc_755%%\t$perc_655%%\t$perc_664%%\t$perc_other%% ${NCL}\n\n"
 
+
+}
+# ENTRY POINT 
 # If the path is empty use the current, otherwise convert relative to absolute; Exec walk()
 [[ -z "${1}" ]] && ABS_PATH="${PWD}" || cd "${1}" && ABS_PATH="${PWD}"
 walk "${ABS_PATH}"
@@ -93,6 +103,7 @@ printf "\n\t\t\t${BLU}==========================================================
 #System info
 
 printf "\n\t\t\t\t\t${RED} System information${NCL}\n"
+printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
 unameinfo=`uname -a 2>/dev/null`
 if [ "$unameinfo" ]; then
     printf "\n\n\t\t${GRE}Kernel information:${YEL}\t\t $unameinfo \n"
