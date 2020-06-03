@@ -14,6 +14,13 @@ TOTAL_SIZE=0
 DIR_NUM=0
 FILE_NUM=0
 
+
+ATTR_755=0
+ATTR_777=0
+ATTR_664=0
+ATTR_655=0
+OTH_ATTR_=0
+
 total_stats() {
     printf "\n\n\n\t\t\t\t\t${RED}Enumerating Directory${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
@@ -30,6 +37,7 @@ file_specification() {
     NAME="${FILE_NAME%.*}"
     EXT="${FILE_NAME##*.}"
     SIZE="$(du -s "${entry}" | cut -f1)"
+    ATTR="$(stat -c "%a" "${entry}")"
     TOTAL_SIZE=$(("$(du -s "${entry}" | cut -f1)" + $TOTAL_SIZE))
     FILE_NUM=$((FILE_NUM + 1))
     printf "%*s${GRE}%s${NCL}\n" $((indent + 4)) '' "${entry}"
@@ -38,6 +46,21 @@ file_specification() {
     printf "%*s\tName only:\t${YEL}%s${NCL}\n" $((indent + 4)) '' "$NAME"
     printf "%*s\tExtension:\t${YEL}%s${NCL}\n" $((indent + 4)) '' "$EXT"
     printf "%*s\tFile size:\t${YEL}%s${NCL}\n" $((indent + 4)) '' "$SIZE"
+    
+    if [ $ATTR == "755" ]; then
+        ATTR_755=$((ATTR_755 + 1))
+        elif [ $ATTR == "777" ]; then
+        ATTR_777=$((ATTR_777 + 1))
+        printf "\t\t${RED}[IMPORTANT!]${YEL} This file has 777 ATTR_*ibutes -> ${RED}$file \n"
+        elif [ $ATTR == "664" ]; then
+        ATTR_664=$((ATTR_664 + 1))
+        elif [ $ATTR == "655" ]; then
+        ATTR_655=$((ATTR_655 + 1))
+    else
+        OTH_ATTR=$((OTH_ATTR + 1))
+        
+    fi
+    
 }
 
 walk() {
@@ -65,39 +88,17 @@ file_permissions() {
     
     total_files=$(find ${1} -maxdepth ${2} -not -path '*/\.*' -type f)
     total_no_of_files=$(echo "$total_files" | wc -l)
-    attr_755=0
-    attr_777=0
-    attr_664=0
-    attr_655=0
-    other_attr=0
     printf "\n\t\t\t\t\t${RED}File Permissions!${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
-    for file in $total_files; do
-        if [ $(stat -c "%a" "$file") == "755" ]; then
-            attr_755=$((attr_755 + 1))
-            elif [ $(stat -c "%a" "$file") == "777" ]; then
-            attr_777=$((attr_777 + 1))
-            printf "\t\t${RED}[IMPORTANT!]${YEL} This file has 777 attributes -> ${RED}$file \n"
-            elif [ $(stat -c "%a" "$file") == "664" ]; then
-            attr_664=$((attr_664 + 1))
-            elif [ $(stat -c "%a" "$file") == "655" ]; then
-            attr_655=$((attr_655 + 1))
-        else
-            other_attr=$((other_attr + 1))
-            
-        fi
-        
-    done
-    
-    #attr_644=$(( ( $attr_644 / total_no_of_files ) * 100 ))
-    perc_777=$((attr_777 * 100 / total_no_of_files))
-    perc_755=$((attr_755 * 100 / total_no_of_files))
-    perc_655=$((attr_655 * 100 / total_no_of_files))
-    perc_664=$((attr_664 * 100 / total_no_of_files))
-    perc_other=$((other_attr * 100 / total_no_of_files))
+    #ATTR_*644=$(( ( $ATTR_*644 / total_no_of_files ) * 100 ))
+    perc_777=$((ATTR_777 * 100 / total_no_of_files))
+    perc_755=$((ATTR_755 * 100 / total_no_of_files))
+    perc_655=$((ATTR_655 * 100 / total_no_of_files))
+    perc_664=$((ATTR_664 * 100 / total_no_of_files))
+    perc_other=$((OTH_ATTR * 100 / total_no_of_files))
     
     printf "\n\n\t\t\t\t${YEL}Total Files\t777\t755\t655\t664\tOther${NCL}\n"
-    printf "\t\t\t\t${GRE}$total_no_of_files\t\t$attr_777\t$attr_755\t$attr_655\t$attr_664\t$other_attr\n\n"
+    printf "\t\t\t\t${GRE}$total_no_of_files\t\t$ATTR_777\t$ATTR_755\t$ATTR_655\t$ATTR_664\t$OTH_ATTR\n\n"
     printf "\t\t\t\t${GRE}100 %% \t\t$perc_777%%\t$perc_755%%\t$perc_655%%\t$perc_664%%\t$perc_other%% ${NCL}\n\n"
     
 }
@@ -166,7 +167,7 @@ file_permissions "${ABS_PATH}" "${DEPTH}"
 lastly_modified "${ABS_PATH}" "${DEPTH}"
 lastly_modified "${ABS_PATH}" "${DEPTH}"
 lastly_created
-system_info 
+system_info
 
 printf "\n\n\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
 printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
