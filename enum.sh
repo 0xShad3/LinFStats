@@ -117,8 +117,8 @@ lastly_created() {
 largest_files() {
     printf "\n\n\t\t\t\t\t${RED}Five largest files!${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
-    printf "\n\t\t${GRE}    Size in Bytes\t\t${GRE}Absolute Paths to the files${NCL}\n\n"
-    find "${1}" -maxdepth "${2}" -not -path "*/\.*" -type f -printf "\t\t\t${YEL}%s\t%p${NCL}\n" | sort -nr | head -5
+    printf "\n\t\t${GRE}    Size in Bytes\t\t${GRE}Absolute Paths to the files${YEL}\n\n"
+    find "${1}" -maxdepth "${2}" -not -path "*/\.*" -type f -exec du -Sh {} + | sort -rh | head -5 | awk '{ printf "\n\t\t\t"$1"\t"$2}'
 }
 
 dir_files() {
@@ -192,7 +192,7 @@ system_info() {
     printf "\n\n\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     printf "\t\t\t\t${YEL}Disk Sector\tSize\tUsed\tAvailable\tPercentage${NCL}\n"
-    df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}' 
+    df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}'
     
 }
 # ENTRY POINT
