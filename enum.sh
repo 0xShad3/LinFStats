@@ -213,6 +213,7 @@ system_info() {
 # If the path is empty use the current, otherwise convert relative to absolute; Exec walk()
 if [[ -z "${1}" ]]; then
 ABS_PATH="${PWD}" || cd "${1}" && ABS_PATH="${PWD}"
+fi
 
 if [[ -z "${2}" ]]; then
     DEPTH=2
