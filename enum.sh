@@ -50,7 +50,7 @@ file_specification() {
         ATTR_755=$((ATTR_755 + 1))
         elif [ $ATTR == "777" ]; then
         ATTR_777=$((ATTR_777 + 1))
-        printf "\t\t${RED}[IMPORTANT!]${YEL} This file has 777 ATTR_*ibutes -> ${RED}$file \n"
+        printf "\t\t${RED}[IMPORTANT!]${YEL} This file has 777 attributes -> ${RED}$file \n"
         elif [ $ATTR == "664" ]; then
         ATTR_664=$((ATTR_664 + 1))
         elif [ $ATTR == "655" ]; then
@@ -73,12 +73,15 @@ walk() {
         fi
     done
     # If the entry is a directory call walk() == create recursion
-    depth=$((depth + 1))
     
     for entry in "$1"/*; do
-        if [[ -d "$entry" ]] && [[ "$depth_counter" -le ${DEPTH} ]]; then
-            walk "$entry" $((indent + 4))
-            DIR_NUM=$((DIR_NUM + 1))
+        if [[ -d "$entry" ]]; then
+            DIR_DEPTH=$(echo "$entry" | tr " /" "- " | wc -w)
+            ##!IMPORTANT CHANGE THE COMPARISON TO BE COMPATIBLE
+            if [[ "$DIR_DEPTH" -le "$DEPTH" ]]; then
+                walk "$entry" $((indent + 4))
+                DIR_NUM=$((DIR_NUM + 1))
+            fi
         fi
     done
 }
@@ -127,7 +130,18 @@ dir_files() {
     printf "\n\t\t${GRE}    Number of files\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
     
     find ${1} -maxdepth ${2} -type d | while read -r dir; do
-        NUM=$(ls "$dir" -lAh | grep -v '^d' | wc -l)
+        NUM=$(ls "$dir" -lAh | grep -v 'd' | wc -l)
+        [ -d "$dir" ] && printf "\n\t\t\t${NCL}${YEL} $NUM\t\t%s\t" "$dir"
+    done | sort -k2nr | head -5
+}
+
+dir_directories() {
+    printf "\n\n\t\t\t\t\t${RED}Directories with most directories!${NCL}\n\n"
+    printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
+    printf "\n\t\t${GRE}    Number of dirs\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
+    
+    find ${1} -maxdepth ${2} -type d | while read -r dir; do
+        NUM=$(ls "$dir" -lAh | grep ^d | wc -l)
         [ -d "$dir" ] && printf "\n\t\t\t${NCL}${YEL} $NUM\t\t%s\t" "$dir"
     done | sort -k2nr | head -5
 }
@@ -197,7 +211,14 @@ system_info() {
 }
 # ENTRY POINT
 # If the path is empty use the current, otherwise convert relative to absolute; Exec walk()
-[[ -z "${1}" ]] && ABS_PATH="${PWD}" || cd "${1}" && ABS_PATH="${PWD}" || [[ -z "${2}" ]] && DEPTH=2 || DEPTH="${2}"
+if [[ -z "${1}" ]]; then
+ABS_PATH="${PWD}" || cd "${1}" && ABS_PATH="${PWD}"
+
+if [[ -z "${2}" ]]; then
+    DEPTH=2
+else
+    DEPTH="${2}"
+fi
 
 walk "${ABS_PATH}"
 total_stats "${ABS_PATH}" "${DEPTH}"
@@ -206,6 +227,7 @@ lastly_modified "${ABS_PATH}" "${DEPTH}"
 lastly_accessed "${ABS_PATH}" "${DEPTH}"
 largest_files "${ABS_PATH}" "${DEPTH}"
 dir_files "${ABS_PATH}" "${DEPTH}"
+dir_directories "${ABS_PATH}" "${DEPTH}"
 dir_size "${ABS_PATH}" "${DEPTH}"
 system_info
 
