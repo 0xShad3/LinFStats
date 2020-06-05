@@ -189,6 +189,10 @@ system_info() {
         printf "\n\n\t\t\t${GRE}Hostname:${YEL}\t\t $hostname \n"
         
     fi
+    printf "\n\n\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
+    printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
+    printf "\t\t\t\t${YEL}Disk Sector\tSize\tUsed\tAvailable\tPercentage${NCL}\n"
+    df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}' 
     
 }
 # ENTRY POINT
@@ -204,12 +208,6 @@ largest_files "${ABS_PATH}" "${DEPTH}"
 dir_files "${ABS_PATH}" "${DEPTH}"
 dir_size "${ABS_PATH}" "${DEPTH}"
 system_info
-
-printf "\n\n\n\t\t\t\t\t${RED}Disk Sizes!${NCL}\n\n"
-printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
-printf "\t\t\t\t${YEL}Disk Sector\tSize\tUsed\tAvailable\tPercentage${NCL}\n"
-df -h | grep "/dev/sda*" | awk '{ printf "\n\t\t\t\t"$1"\t\033[1;34m" $2"\t\033[0;31m"$3"\t\033[1;32m"$4"\t\t\033[0;31m"$5"\033[0m"}'
-
 
 # printf "\n\n\t\t\t\t\t${RED}Five largest folders!${NCL}\n\n"
 # printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
