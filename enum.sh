@@ -24,7 +24,7 @@ total_stats() {
     printf "\n\n\n\t\t\t\t\t${RED}Enumerating Directory${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     printf "\t\t\t\t${GRE}Path: ${YEL}\t\t${1}\n"
-    printf "\t\t\t\t${GRE}Depth: ${YEL}\t\t${2}\n"
+    printf "\t\t\t\t${GRE}Absolute Depth: ${YEL}\t\t${2}\n"
     printf "\t\t\t\t${GRE}Total Size: ${YEL}\t$((${TOTAL_SIZE%% *} / 1024)) MB\n"
     printf "\t\t\t\t${GRE}Directories: ${YEL}\t$DIR_NUM\n"
     printf "\t\t\t\t${GRE}Files: ${YEL}\t\t$FILE_NUM\n\n\n"
