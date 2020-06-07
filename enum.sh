@@ -115,7 +115,7 @@ dir_files() {
     printf "\n\t\t${GRE}    Number of files\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
 
     find ${1} -maxdepth ${2} -not -path '*/\.*' -type d | while read -r dir; do
-        NUM=$(ls "$dir" -lAh | grep -v 'd' | wc -l)
+        NUM=$(ls "$dir" -lAh | grep -v '^d' | wc -l)
         [ -d "$dir" ] && printf "\n\t\t\t${NCL}${YEL} $NUM\t\t%s\t" "$dir"
     done | sort -k2nr | head -5
 }
