@@ -102,20 +102,6 @@ file_permissions() {
 
 }
 
-lastly_created() {
-    printf "\n\n\t\t\t\t\t${RED}Five lastly created files!${NCL}\n\n"
-    printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
-    # printf "\n\t\t\t${GRE}Time\t\tMonth\t\Name${YEL}\n"
-
-    for i in {2..6}; do
-        ls -tl | head -6 | awk '{print $9}' | sed "${i}q;d"
-        ls -tl | head -6 | awk '{print $8}' | sed "${i}q;d"
-        ls -tl | head -6 | awk '{print $7}' | sed "${i}q;d"
-
-        printf "${BLU}========================\n${NCL}"
-    done
-}
-
 largest_files() {
     printf "\n\n\t\t\t\t\t${RED}Five largest files!${NCL}\n\n"
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
