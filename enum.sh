@@ -114,7 +114,7 @@ dir_files() {
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     printf "\n\t\t${GRE}    Number of files\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
 
-    find ${1} -maxdepth ${2} -type d | while read -r dir; do
+    find ${1} -maxdepth ${2} -not -path '*/\.*' -type d | while read -r dir; do
         NUM=$(ls "$dir" -lAh | grep -v 'd' | wc -l)
         [ -d "$dir" ] && printf "\n\t\t\t${NCL}${YEL} $NUM\t\t%s\t" "$dir"
     done | sort -k2nr | head -5
@@ -125,7 +125,7 @@ dir_directories() {
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     printf "\n\t\t${GRE}    Number of dirs\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
 
-    find ${1} -maxdepth ${2} -type d | while read -r dir; do
+    find ${1} -maxdepth ${2} -not -path '*/\.*' -type d | while read -r dir; do
         NUM=$(ls "$dir" -lAh | grep ^d | wc -l)
         [ -d "$dir" ] && printf "\n\t\t\t${NCL}${YEL} $NUM\t\t%s\t" "$dir"
     done | sort -k2nr | head -5
@@ -136,7 +136,7 @@ dir_size() {
     printf "\n\t\t\t${BLU}===================================================================${NCL}\n\n"
     printf "\n\t\t${GRE}    Size of directories\t\t${GRE}Absolute Paths to the directories${NCL}\n\n"
 
-    find ${1} -maxdepth ${2} -type d | while read -r dir; do
+    find ${1} -maxdepth ${2} -not -path '*/\.*' -type d | while read -r dir; do
         NUM=$(du -h -d 1 "$dir")
         [ -d "$dir" ] && printf "\n\t\t\t${YEL} $NUM\t\t%s:\t ${NCL}" "$dir"
     done | sort -k2hr | head -5
